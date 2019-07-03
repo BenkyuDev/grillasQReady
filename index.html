@@ -20,7 +20,7 @@
 <div id="example">
 
     <div class="box wide">
-        <p style="margin-bottom: 1em"><b>Important:</b></p>
+        <p style="margin-bottom: 1em"><b>REGIMEN DE LICENCIAS Y JUSTIFICACIONES PARA EL PERSONAL DOCENTE DE LA UNIVERSIDAD NACIONAL DE JUJUY</b></p>
 
 
     <div id="grid"></div>
@@ -58,7 +58,7 @@
       <div class="page-template">
         <div class="header">
           <div style="float: right">Pagina #: pageNum # de #: totalPages #</div>
-         REGIMEN DE LICENCIAS Y JUSTIFICACIONES PARA EL PERSONAL DOCENTE DE LA UNIVERSIDAD NACIONAL DE JUJUY
+         
         </div>
         <div class="watermark"></div>
         <div class="footer">
@@ -142,11 +142,14 @@
                 <!-- }] -->
 				 columns: [{title: "Licencias", field: "itemno", width: "15%"},
 				 {title: "Art<br/> Nro:", field: "articulo", width: "6%"},
-                      {title: "Beschreibung", field: "description", width: "41%"},
-                      {title: "VK-Preis", field: "unitprice", width: "35%"}]
+                      {title: "Periodo Otorgado", field: "description", width: "41%"},
+                      {title: "Documentacion Requerida", field: "unitprice", width: "35%"}]
 				
             });
         });
+		 window.onload = function() {
+ $('.k-button, .k-button-icontext, .k-grid-pdf')[0].innerHTML= '<span class="k-icon k-i-file-pdf"></span>Exportar a PDF';
+};
     </script>
 	 
      
