@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+    <base href="https://demos.telerik.com/kendo-ui/grid/pdf-export">
+    <style>html { font-size: 14px; font-family: Arial, Helvetica, sans-serif; }</style>
+    <title></title>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2019.2.619/styles/kendo.common-material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2019.2.619/styles/kendo.material.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2019.2.619/styles/kendo.material.mobile.min.css" />
+
+    <script src="https://kendo.cdn.telerik.com/2019.2.619/js/jquery.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2019.2.619/js/jszip.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2019.2.619/js/kendo.all.min.js"></script>
+    
+
+</head>
+<body>
+<div id="example">
+
+    <div class="box wide">
+        <p style="margin-bottom: 1em"><b>Important:</b></p>
+
+
+    <div id="grid"></div>
+
+    <style>
+        /*
+            Use the DejaVu Sans font for display and embedding in the PDF file.
+            The standard PDF fonts have no support for Unicode characters.
+        */
+        .k-grid {
+            font-family: "DejaVu Sans", "Arial", sans-serif;
+        }
+    </style>
+
+    <script>
+        /*
+            This demo renders the grid in "DejaVu Sans" font family, which is
+            declared in kendo.common.css. It also declares the paths to the
+            fonts below using <tt>kendo.pdf.defineFont</tt>, because the
+            stylesheet is hosted on a different domain.
+        */
+        kendo.pdf.defineFont({
+            "DejaVu Sans"             : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans.ttf",
+            "DejaVu Sans|Bold"        : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Bold.ttf",
+            "DejaVu Sans|Bold|Italic" : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+            "DejaVu Sans|Italic"      : "https://kendo.cdn.telerik.com/2016.2.607/styles/fonts/DejaVu/DejaVuSans-Oblique.ttf",
+            "WebComponentsIcons"      : "https://kendo.cdn.telerik.com/2017.1.223/styles/fonts/glyphs/WebComponentsIcons.ttf"
+        });
+    </script>
+
+    <!-- Load Pako ZLIB library to enable PDF compression -->
+    <script src="https://kendo.cdn.telerik.com/2019.2.619/js/pako_deflate.min.js"></script>
+
+    <script type="x/kendo-template" id="page-template">
+      <div class="page-template">
+        <div class="header">
+          <div style="float: right">Pagina #: pageNum # de #: totalPages #</div>
+         REGIMEN DE LICENCIAS Y JUSTIFICACIONES PARA EL PERSONAL DOCENTE DE LA UNIVERSIDAD NACIONAL DE JUJUY
+        </div>
+        <div class="watermark"></div>
+        <div class="footer">
+          Pagina #: pageNum # de #: totalPages #
+        </div>
+      </div>
+    </script>
+
+    <script>
+	
+        $(document).ready(function () {
+		var dsXMLData = "<items><Item><No>Anual ordinaria (VACACIONES)</No><articulo>12- a</articulo><Description>Se fijará en relación con la antigüedad acreditada por el agente al 31 de diciembre del año al que corresponda el beneficio y de acuerdo a la siguiente escala: hasta 05 años de antigüedad 20 días corridos hasta 10 años de antigüedad 25 días corridos hasta 15 años de antigüedad 30 días corridos hasta 20 años de antigüedad 35 días corridos más de 20 años de antigüedad 40 días corridos</Description><UnitPrice>Se otorgará por año vencido, con goce íntegro de haberes, siendo obligatoria su concesión y utilización.</UnitPrice></Item><Item><No>4712</No><Description>Artikel 4712</Description><UnitPrice>24.68</UnitPrice></Item></items>";
+            $("#grid").kendoGrid({
+                toolbar: ["pdf"],
+                pdf: {
+                    allPages: true,
+                    avoidLinks: true,
+                    paperSize: "A4",
+                    margin: { top: "2cm", left: "1cm", right: "1cm", bottom: "1cm" },
+                    landscape: true,
+                    repeatHeaders: true,
+                    template: $("#page-template").html(),
+                    scale: 0.8
+                },
+                dataSource: {
+                   data: dsXMLData,
+            schema:
+            {
+                type: 'xml',
+                data: '/items/Item',
+                model:
+                {
+                    fields:
+                    {
+                        itemno:         { field: "No/text()" },
+						articulo:         { field: "articulo/text()" },
+                        description:    { field: "Description/text()" },
+                        unitprice:      { field: "UnitPrice/text()"  }
+                    }
+                }
+            }
+            },
+    <!-- schema: { -->
+                            <!-- // specify the the schema is XML -->
+                            <!-- type: "xml", -->
+                            <!-- // the XML element which represents a single data record -->
+                            <!-- data: "/books/book", -->
+                            <!-- // define the model - the object which will represent a single data record -->
+                            <!-- model: { -->
+                                <!-- // configure the fields of the object -->
+                                <!-- fields: { -->
+                                    <!-- // the "title" field is mapped to the text of the "title" XML element -->
+                                    <!-- title: "title/text()", -->
+                                    <!-- // the "author" field is mapped to the text of the "author" XML element -->
+                                    <!-- author: "author/text()", -->
+                                    <!-- // the "url" field is mapped to the text of the "url" XML element -->
+                                    <!-- url: "url/text()", -->
+                                    <!-- // the "cover" field is mapped to the "id" attribute of the "book" XML element -->
+                                    <!-- cover: "@cover" -->
+                                <!-- } -->
+                            <!-- } -->
+                        <!-- }, -->
+
+
+                height: 550,
+                sortable: true,
+                <!-- columns: [{ -->
+                    <!-- template: "<div class='customer-photo'" + -->
+                        <!-- "style='background-image: url(../content/web/Customers/#:data.CustomerID#.jpg);'></div>" + -->
+                        <!-- "<div class='customer-name'>#: ContactName #</div>", -->
+                    <!-- field: "ContactName", -->
+                    <!-- title: "Contact Name", -->
+                    <!-- width: "20%" -->
+                <!-- },  { -->
+                    <!-- field: "CompanyName", -->
+                    <!-- title: "Company Name", -->
+                  <!-- width: "60%" -->
+                <!-- }, { -->
+                    <!-- field: "Country", -->
+                   <!-- width: "20%" -->
+                <!-- }] -->
+				 columns: [{title: "Artikel Nr.", field: "itemno", width: "10%"},
+				 {title: "Articulo", field: "articulo", width: "6%"},
+                      {title: "Beschreibung", field: "description", width: "46%"},
+                      {title: "VK-Preis", field: "unitprice", width: "35%"}]
+				
+            });
+        });
+    </script>
+	 
+     
+    <style>
+        /* Page Template for the exported PDF */
+        .page-template {
+          font-family: "DejaVu Sans", "Arial", sans-serif;
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+        }
+        .page-template .header {
+          position: absolute;
+          top: 30px;
+          left: 30px;
+          right: 30px;
+          border-bottom: 1px solid #888;
+          color: #888;
+        }
+        .page-template .footer {
+          position: absolute;
+          bottom: 30px;
+          left: 30px;
+          right: 30px;
+          border-top: 1px solid #888;
+          text-align: center;
+          color: #888;
+        }
+        .page-template .watermark {
+          font-weight: bold;
+          font-size: 400%;
+          text-align: center;
+          margin-top: 30%;
+          color: #aaaaaa;
+          opacity: 0.1;
+          transform: rotate(-35deg) scale(1.7, 1.5);
+        }
+
+        /* Content styling */
+        .customer-photo {
+          display: inline-block;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background-size: 32px 35px;
+          background-position: center center;
+          vertical-align: middle;
+          line-height: 32px;
+          box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0,0,0,.2);
+          margin-left: 5px;
+        }
+        kendo-pdf-document .customer-photo {
+          border: 1px solid #dedede;
+        }
+        .customer-name {
+          display: inline-block;
+          vertical-align: middle;
+          line-height: 32px;
+          padding-left: 3px;
+        }
+    </style>
+</div>
+
+
+</body>
+</html>
